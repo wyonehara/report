@@ -2,12 +2,16 @@
 <html lang="ja">
 <head><meta charset="UTF-8"><title>Todos</title></head>
 <body>
-<h1>Todo 一覧</h1>
+<h1>Todo一覧</h1>
+
 <table border="1">
-<tr><th>ID</th><th>Title</th><th>Detail</th><th>操作</th></tr>
-<% data.forEach(t => { %>
+<tr><th>優先順位</th><th>タイトル</th><th>詳細</th><th>操作</th></tr>
+
+<% data
+   .sort((a,b)=>a.priority - b.priority)  // ★優先順位の低い数字から表示
+   .forEach(t => { %>
 <tr>
-  <td><%= t.id %></td>
+  <td><%= t.priority %></td>
   <td><a href="/todos/detail/<%= t.id %>"><%= t.title %></a></td>
   <td><%= t.detail %></td>
   <td>
@@ -17,6 +21,9 @@
 </tr>
 <% }) %>
 </table>
+<br>
+
 <a href="/todos/create">＋ Todo追加</a>
+
 </body>
 </html>

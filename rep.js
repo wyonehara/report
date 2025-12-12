@@ -33,7 +33,8 @@ app.get("/players/detail/:id", (req, res) => {
 // 追加処理
 app.post("/players", (req, res) => {
   // 本来ならここにDBとのやり取りが入る
-  const id = players.length + 1;
+  const maxId = players.length > 0 ? Math.max(...players.map(p => p.id)) : 0; //IDの重複を防ぐ
+  const id = maxId + 1;
   const name = req.body.name;
   const number = req.body.number;
   const position = req.body.position;
@@ -131,8 +132,8 @@ app.post("/cities/update/:number", (req, res) => {
 
 // ---------------- Todos ----------------
 let todos = [
-  { id: 1, title: "レポート提出", detail: "12/26まで" },
-  { id: 2, title: "バイト", detail: "12/11" },
+  { id: 1, priority: 1, title: "レポート提出", detail: "12/26まで" },
+  { id: 2, priority: 2, title: "バイト", detail: "12/11" },
 ];
 
 app.get("/todos", (req, res) =>
@@ -150,12 +151,21 @@ app.get("/todos/detail/:id", (req, res) => {
 });
 
 app.post("/todos", (req, res) => {
-  const id = todos.length + 1;
+  const maxId = todos.length > 0 ? Math.max(...todos.map(t => t.id)) : 0;
+  const id = maxId + 1;
+
+  const newPriority = Number(req.body.priority);
+
+  // ★ 既存の Todo の順位を繰り下げる
+  todos = todos.map(t => {
+    if (t.priority >= newPriority) {
+      return { ...t, priority: t.priority + 1 };
+    }
+    return t;
+  });
   const title = req.body.title;
   const detail = req.body.detail;
-  const population = req.body.population;
-  const industry = req.body.industry;
-  todos.push( { id: id, title: title, detail: detail } );
+  todos.push( { id: id, title: title, priority: newPriority, detail: detail } );
   console.log( todos );
   res.redirect("/todos");
 });
@@ -174,8 +184,30 @@ app.get("/todos/edit/:id", (req, res) => {
 
 app.post("/todos/update/:id", (req, res) => {
   const id = Number(req.params.id);
-  const index = todos.findIndex(t => t.id === id);
-  todos[index] = { id, ...req.body };
+  const todo = todos.find(t => t.id === id);
+  const oldPriority = todo.priority;
+  const newPriority = Number(req.body.priority);
+
+  if (newPriority < oldPriority) {//繰り上げ
+    todos = todos.map(t => {
+      if (t.id !== id && t.priority >= newPriority && t.priority < oldPriority) {
+        return { ...t, priority: t.priority + 1 };
+      }
+      return t;
+    });
+  } else if (newPriority > oldPriority) {//繰り下げ
+    todos = todos.map(t => {
+      if (t.id !== id && t.priority <= newPriority && t.priority > oldPriority) {
+        return { ...t, priority: t.priority - 1 };
+      }
+      return t;
+    });
+  }
+
+  todo.title = req.body.title;
+  todo.detail = req.body.detail;
+  todo.priority = newPriority;
+  console.log(todos);
   res.redirect("/todos");
 });
 
