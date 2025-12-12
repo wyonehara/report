@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><title><%= data.title %></title></head>
+<body>
+<h1><%= data.title %> の詳細</h1>
+<p>ID：<%= data.id %></p>
+<p>Detail：<%= data.detail %></p>
+
+<a href="/todos/edit/<%= data.id %>">編集</a> /
+<a href="/todos/delete/<%= data.id %>">削除</a>
+<br><br>
+<a href="/todos">一覧に戻る</a>
+</body>
+</html>

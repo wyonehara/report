@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><title>Todos</title></head>
+<body>
+<h1>Todo 一覧</h1>
+<table border="1">
+<tr><th>ID</th><th>Title</th><th>Detail</th><th>操作</th></tr>
+<% data.forEach(t => { %>
+<tr>
+  <td><%= t.id %></td>
+  <td><a href="/todos/detail/<%= t.id %>"><%= t.title %></a></td>
+  <td><%= t.detail %></td>
+  <td>
+    <a href="/todos/edit/<%= t.id %>">編集</a> /
+    <a href="/todos/delete/<%= t.id %>">削除</a>
+  </td>
+</tr>
+<% }) %>
+</table>
+<a href="/todos/create">＋ Todo追加</a>
+</body>
+</html>
