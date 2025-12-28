@@ -4,7 +4,8 @@
 <body>
 <h1>都市情報編集</h1>
 
-<form action="/cities/update/<%= data.id %>" method="post">
+<form action="/cities/update/<%= data.id %>" method="POST">
+  <p>ID:<input type="number" name="id" value="<%= data.id %>" required></p>
   <p>Name: <input type="text" name="name" value="<%= data.name %>" required></p>
   <p>Country: <input type="text" name="country" value="<%= data.country %>" required></p>
   <p>Population: <input type="number" name="population" value="<%= data.population %>" required></p>

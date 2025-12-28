@@ -91,7 +91,7 @@ app.get("/cities/create", (req, res) =>
 app.get("/cities/detail/:id", (req, res) => {
   const id = Number(req.params.id);
   const data = cities.find(c => c.id === id);
-  res.render("city_detail", { data });
+  res.render("cities_detail", { data });
 });
 
 app.post("/cities", (req, res) => {
@@ -114,19 +114,33 @@ app.get("/cities/delete/:id", (req, res) => {
 app.get("/cities/edit/:id", (req, res) => {
   const id = Number(req.params.id);
   const data = cities.find(c => c.id === id);
-  res.render("city_edit", { data });
+  res.render("cities_edit", { data });
 });
 
-app.post("/cities/update/:number", (req, res) => {
-  // 本来は変更する番号が存在するか，各項目が正しいか厳重にチェックする
-  // 本来ならここにDBとのやり取りが入る
-  cities[req.params.id].id = req.body.id;
-  cities[req.params.id].name = req.body.name;
-  cities[req.params.id].country = req.body.country;
-  cities[req.params.id].population = req.body.population;
-  cities[req.params.id].industry = req.body.industry;
-  console.log( cities);
-  res.redirect('/cities' );
+app.post("/cities/update/:id", (req, res) => {
+  const oldId = Number(req.params.id);
+  const newId = Number(req.body.id);
+
+  const index = cities.findIndex(c => c.id === oldId);
+  if (index === -1) {
+    return res.send("都市が見つかりません");
+  }
+
+  // ★ ID重複チェック
+  if (cities.some(c => c.id === newId && c.id !== oldId)) {
+    return res.send("そのIDは既に使われています");
+  }
+
+  cities[index] = {
+    id: newId,
+    name: req.body.name,
+    country: req.body.country,
+    population: req.body.population,
+    industry: req.body.industry
+  };
+
+  console.log(cities);
+  res.redirect("/cities");
 });
 
 
@@ -172,9 +186,25 @@ app.post("/todos", (req, res) => {
 
 app.get("/todos/delete/:id", (req, res) => {
   const id = Number(req.params.id);
+
+  const target = todos.find(t => t.id === id);
+  if (!target) {return res.redirect("/todos");}
+
+  const deletedPriority = target.priority;
   todos = todos.filter(t => t.id !== id);
+
+  // 優先順位繰り上げ
+  todos = todos.map(t => {
+    if (t.priority > deletedPriority) {
+      return { ...t, priority: t.priority - 1 };
+    }
+    return t;
+  });
+
+  console.log(todos);
   res.redirect("/todos");
 });
+
 
 app.get("/todos/edit/:id", (req, res) => {
   const id = Number(req.params.id);

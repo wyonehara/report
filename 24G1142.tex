@@ -6,11 +6,12 @@
 \usepackage[fleqn,tbtags]{mathtools} % 数式関連 (w/ amsmath)
 \usepackage{hira-stix}
 \usepackage{listings,jvlisting} 
+\usepackage[dvipdfmx]{graphicx}
 
 \lstset{
   basicstyle={\ttfamily},
   identifierstyle={\small},
-  commentstyle={\smallitshape},
+commentstyle={\small\itshape},
   keywordstyle={\small\bfseries},
   ndkeywordstyle={\small},
   stringstyle={\small\ttfamily},
@@ -28,11 +29,304 @@
 
 \begin{document}
 
-\title{データ圧縮による自作スキャナーの改善}
+\title{Webページでのデータ一覧管理システムの仕様書}
 \author{24G1142 米原亙}
-\date{2025年12月12日}
+\date{2025年12月28日}
 \maketitle
+\section{ソースコード}
+reportに関するものがまとめられたgithubのディポジトリのurlを以下に添付する．
 
-\section{}
+https://github.com/wyonehara/report.git
+
+\section{利用者向け仕様書（野球選手一覧システム）}
+\subsection{概要}
+Webページ上で野球選手の一覧を閲覧，編集できるシステムを作成した．
+以下に，ユーザーがWeb上で行う操作方法を説明する．
+
+\subsection{操作方法}
+\subsubsection{ホームページへのアクセス}
+まず野球選手一覧へのアクセス方法は，図\ref{ac}のようにhttp://localhost:8080/playersをお使いのwebブラウザの検索ボックスに入力し，ホームページにアクセスします．
+ホームページにアクセスすると図\ref{home}のように，野球選手一覧の画面に選手の名前，背番号が表示される．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/access.jpg}
+\caption{ホームページへのアクセス}
+\label{ac}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/homepage.jpg}
+\caption{トップページ}
+\label{home}
+\end{center}
+\end{figure}
+
+
+
+\subsubsection{選手詳細}
+トップページの選手の名前のリンクをクリックすると，図\ref{detail}のように選手の詳細ページに飛ぶことができる．
+一覧に戻りたいときは，"一覧へ戻る"をクリックすることで戻ることができる．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/detail.jpg}
+\caption{選手詳細ページ}
+\label{detail}
+\end{center}
+\end{figure}
+
+\subsubsection{編集}
+選手の詳細を編集したい場合は，トップページの選手の名前の右にある”編集”をクリックすると図\ref{edit}のページに飛ぶことができる．
+そして，編集したい項目のチャットボックスを変更し，”更新”をクリックすることで変更が可能である．
+大谷翔平の年齢を31に変更後，詳細ページに飛ぶと図\ref{afteredit}のように大谷の詳細が変更している．
+編集をやめたい場合は”戻る”をクリックすることで，トップページに戻る．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/edit.jpg}
+\caption{編集ページ}
+\label{edit}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/after_edit.jpg}
+\caption{編集後の詳細ページ}
+\label{afteredit}
+\end{center}
+\end{figure}
+
+\subsubsection{選手の削除}
+選手を削除したい場合は選手の名前の右にある”削除”をクリックすると図\ref{confirm}のように削除してよいか確認がされるので”OK”を押すことで図\ref{delete}のように削除される．
+削除をやめたい場合には”キャンセル”をクリックする．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/confirm.jpg}
+\caption{削除確認}
+\label{confirm}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/delete.jpg}
+\caption{削除後のトップページ}
+\label{delete}
+\end{center}
+\end{figure}
+
+\subsubsection{選手の追加}
+選手を追加したい場合は，トップページの”選手追加”をクリックすることで図\ref{add}のように選手追加ページに飛ぶことができる．
+すべてのチャットボックスを埋め，登録ボタンをクリックすることで図\ref{afteradd}のように選手が追加される．
+選手の追加をやめたい場合は戻るボタンをクリックするとトップページに戻ることができる．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/add.jpg}
+\caption{追加ページ}
+\label{add}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/afteradd.jpg}
+\caption{追加後のトップページ}
+\label{afteradd}
+\end{center}
+\end{figure}
+
+
+\section{管理者向け仕様書}
+\subsection{サーバの立ち上げ}
+ターミナルやコマンドプロンプトで rep.js を配置したディレクトリで図\ref{server}のように”node rep.js”を実行し，サーバーが起動する.
+ポート番号8080で listen され，起動に成功した場合メッセージが表示される．
+サーバを終わらせたい場合は，ターミナルでcontrol+cを押して終了させる．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=6cm, clip]{fig/startserver.jpg}
+\caption{サーバ立ち上げ時のターミナル}
+\label{server}
+\end{center}
+\end{figure}
+
+
+\section{開発者向け仕様書}
+野球選手一覧，世界都市システム，やることリストの３つをnodejsを用いて作成する．
+開発言語はJavascriptで，各システムはローカルネットワーク上で動作し，ブラウザからアクセスすることで利用可能である．
+データベースは使用せず，すべてのデータはサーバプログラム内の変数として管理している．
+
+\subsection{野球選手一覧システム}
+野球選手一覧を作成する．
+本システムは野球選手の情報を管理し，ユーザーがブラウザからアクセスすることで，野球選手の一覧表示，詳細表示，データの追加，編集，削除を行うことができる．
+本仕様書では，開発者向けに本システムの構成について説明する．
+また，ページ遷移図は図\ref{pfuro}のようになっている．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=10cm, clip]{fig/pfuro.jpg}
+\caption{野球選手一覧のページ遷移図}
+\label{pfuro}
+\end{center}
+\end{figure}
+
+
+\subsubsection{データ管理}
+野球選手の情報は，｛id: Number（一意なID），name: String（選手名），number: Number（背番号），position: String（ ポジション），age: Number（年齢）｝の形式のオブジェクトとして管理する．
+これらのオブジェクトを配列 players に格納し，簡易的なデータベースとして扱っている．
+ID は各選手を一意に識別するための値であり，選手追加時に自動で採番されるよう実装している.
+本システムでは，ID と配列のindexを混同しないようにして実装を行った．
+URLでは必ず ID を使用し，サーバ側ではfindやfindIndex を用いて対象データを取得することで，データの不整合が発生しないようにしている．
+
+
+\subsubsection{一覧表示（GET /players）}
+選手一覧の表示では，GETメソッドで/playersにアクセスすると，サーバ側で管理しているすべての選手データを取得し，players.ejsにrenderし，表形式で一覧表示している．
+各選手名は詳細画面へのリンクとなっており，リンクをクリックすることで/players/detail/:idにページ遷移し，該当する選手の詳細情報を閲覧することができる．
+また，各行には編集ボタンおよび削除ボタンが配置されており，それぞれ/players/edit/:id，/players/delete/:idに遷移する．
+一覧の下には新規選手追加のボタンがあり，/players/createに遷移する．
+
+\subsubsection{選手追加（GET /players/create）}
+新規選手の追加は，/playersでボタンを押しGETメソッドで/players/createにアクセスすると，HTMLファイルplayers\_add.htmlを表示する．
+この画面では，選手名，背番号，ポジション，年齢を入力するフォームを表示する．
+フォーム送信時には POSTメソッドでplayersにデータが送信される．
+
+\subsubsection{選手追加処理（POST /players）}
+追加処理では，フォームから送信されたデータを受け取り，新しい選手データを作成する．
+既存の選手データの中から最大の ID を取得し，その値に1を加えたものを新しい選手の ID として設定している．
+これにより，途中で選手が削除された場合でもIDが重複しないようにしている．
+追加後は一覧画面へリダイレクトし，更新された選手一覧を表示する
+
+\subsubsection{詳細表示（GET /players/detail/:id）}
+詳細表示では，URLパラメータとして受け取ったIDをもとに，players配列から該当する選手データを検索する．
+取得したデータはplayer\_detail.ejsに渡され，選手の名前，背番号，ポジション，年齢といった詳細情報を表示する．
+また，一覧へ戻るリンクを表示し，/playersに戻れる仕様にしている．
+
+\subsubsection{編集（GET /players/edit/:id）}
+選手情報の編集では，編集対象のIDをもとに選手データを取得し，取得したデータはplayer\_edit.ejsに渡され，既存の情報を入力欄に表示した編集画面を生成する．
+ユーザーは各項目を編集することができ，フォーム送信時には更新処理へ遷移する．
+
+\subsubsection{更新処理（GET /players/update/:id）}
+更新処理では，対象となる選手のIDを保持したまま，名前や背番号などの項目のみを更新するようにしている.
+これにより，選手の識別情報が変更されることなく，内容のみを編集できる構成となっている．
+更新後は一覧画面へリダイレクトする．
+
+\subsubsection{削除（GET /players/delete/:id）}
+削除処理では，指定されたIDを持つ選手を配列から削除し，処理完了後に一覧画面へリダイレクトし，削除後の一覧を表示する．
+削除後もシステムが正しく動作するよう，一覧表示や詳細表示では常にIDを基準としてデータを取得する設計としている．
+
+
+\subsection{世界都市システム}
+世界各地の都市情報を一覧で表示するWebアプリケーションを作成する．
+本システムは，世界の都市の情報を管理し，ユーザーはブラウザからアクセスすることで，都市情報の一覧表示，詳細表示，データの追加，編集，削除を行うことができる．
+本システムも野球選手一覧システムと同様に，Node.jsを用いて実装している．
+また，ページ遷移図は図\ref{cfuro}のようになっている．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=10cm, clip]{fig/cfuro.jpg}
+\caption{追加後のトップページ}
+\label{cfuro}
+\end{center}
+\end{figure}
+
+\subsubsection{データ管理}
+都市情報は，
+\{id: Number（一意なID），name: String（都市名），country: String（国名），population: Number（人口），industry: String（主要産業）\}
+の形式を持つオブジェクトとして管理する．
+これらのオブジェクトを配列 \texttt{cities} に格納し，簡易的なデータベースとして扱っている．
+
+ID は都市を一意に識別するための値であり，ユーザーが指定して追加できるように実装している．
+そのため，都市の追加と更新処理では，既存の都市データとIDが重複しないかをチェックし，重複する場合は処理を中断する設計にしている．
+一覧表示時には，ID順に並び替えて表示することで，見やすい画面構成としている．
+
+\subsubsection{一覧表示（GET /cities）}
+一覧表示では，GET メソッドで/citiesにアクセスすると，すべての都市データを取得する．
+取得したデータはID順にソートされた後，cities.ejsにレンダーされ，表形式で表示される．
+各都市名は都市詳細へのリンクとなっていて，クリックすると/cities/detail/:idに遷移する．
+また，各行には編集ボタンおよび削除ボタンが配置されており，それぞれ/cities/edit/:id，/cities/delete/:idに遷移する．
+一覧の下には都市追加のボタンがあり，/cities/createに遷移する．
+
+\subsubsection{都市追加（GET /cities/create）}
+都市追加画面では，GETメソッドで/cities/createにアクセスすると，都市情報入力用のHTMLファイルcities\_add.htmlを表示する．
+この画面では，ID，都市名，国名，人口，主要産業を入力することができるフォームを表示する．
+
+\subsubsection{都市追加処理（POST /cities）}
+追加処理では，フォームから送信された都市情報を受け取り，新しい都市情報をcities配列に追加する．
+このとき，入力されたIDが既存の都市と重複していないかを確認し，重複がある場合はエラーメッセージを表示する．
+追加完了後は一覧画面へリダイレクトする．
+
+\subsubsection{詳細表示（GET /cities/detail/:id）}
+詳細表示では，受け取ったIDをもとに都市データを検索し，該当する都市の詳細情報を表示する．
+取得したデータはcities\_detail.ejsに渡され，都市名，国名，人口，主要産業といった詳細情報を表示する．
+また，一覧へ戻るリンクを表示し，/citiesに戻れる仕様にしている．
+
+\subsubsection{編集（GET /cities/edit/:id）}
+編集画面では，指定されたIDの都市データを取得し，取得したデータはcities\_edit.ejsに渡され，既存の情報を入力欄に表示したフォームを生成する．
+ユーザーは都市情報およびIDを変更することが可能である．
+
+\subsubsection{更新処理（POST /cities/update/:id）}
+更新処理では，編集画面から送信されたデータをもとに都市情報を更新する．
+IDを変更する場合は，ほかの都市と重複しないことを確認した上で更新を行う．
+更新後は一覧画面へリダイレクトする．
+
+\subsubsection{削除（GET /cities/delete/:id）}
+削除処理では，指定されたIDを持つ都市データを配列から削除し，一覧画面へリダイレクトする．
+削除後も一覧表示は常にIDを基準として行われる．
+
+
+\subsection{やることリストシステム}
+やることリストシステムは，タスクを優先順位付きで管理することを目的とした Web アプリケーションである．
+ユーザーはタスクの一覧表示，詳細表示，追加，編集，削除を行うことができる．
+本システムも他のシステムと同様にNode.jsを用いて実装している．
+また，ページ遷移図は図\ref{tfuro}のようになっている．
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=10cm, clip]{fig/tfuro.jpg}
+\caption{追加後のトップページ}
+\label{tfuro}
+\end{center}
+\end{figure}
+
+\subsubsection{データ管理}
+タスク情報は，id: Number（一意なID），priority: Number（優先順位），title: String（タイトル），detail: String（詳細）の形式を持つオブジェクトとして管理する．
+これらのオブジェクトを配列todosに格納している．
+IDはタスク追加時に自動で採番される．
+また，優先順位はユーザーが指定できるように実装しており，順位が重複しないように制御を行っている．
+
+\subsubsection{一覧表示（GET /todos）}
+一覧表示では，GETメソッドで/todosにアクセスすると，cities.ejsにレンダーされ，すべてのタスクを取得し，優先順位順に表示する．
+各タスクには編集および削除の操作リンクが配置されている．
+
+\subsubsection{タスク追加（GET /todos/create）}
+タスク追加では，GETメソッドで/todos/createにアクセスすると，やることリストを入力するのHTMLファイルtodos\_add.htmlを表示する．
+画面ではタイトル，詳細，優先順位を入力するフォームを表示する．
+ユーザーは新しいタスクを任意の優先順位に挿入することができる．
+
+\subsubsection{タスク追加処理（POST /todos）}
+追加処理では，新しいタスクの優先順位を受け取り，既存のタスクのうち同じまたはそれ以上の優先順位を持つものを繰り下げる．
+その後，新しいタスクを指定された優先順位で追加する．
+この処理により，優先順位が重複しない状態を維持している．
+
+\subsubsection{詳細表示（GET /todos/detail/:id）}
+詳細表示では，指定されたIDをもとにタスクをfind検索し，todo\_detail.ejsにレンダーしてタイトル，詳細，優先順位を表示する．
+
+\subsubsection{編集（GET /todos/edit/:id）}
+編集画面では，指定されたIDの都市データを取得し，取得したデータはtodo\_edit.ejsに渡され，既存のタスク情報を入力欄に表示し，ユーザーが内容および優先順位を変更できるようにしている．
+
+\subsubsection{更新処理（POST /todos/update/:id）}
+更新処理では，変更前と変更後の優先順位を比較し，他のタスクの優先順位を必要に応じて繰り上げまたは繰り下げる．
+これにより，編集後も優先順位が重複しない状態を保っている．
+
+\subsubsection{削除（GET /todos/delete/:id）}
+削除処理では，指定された ID のタスクを削除する．
+削除後は，削除されたタスクより下位の優先順位を持つタスクを繰り上げることで，優先順位の連続性を維持している．
+
 
 \end{document}
